@@ -1,0 +1,35 @@
+#~/tmp/cdk/dac-config.toml
+PrivateKey = {Path = "/app/account.key", Password = "testonly"}
+
+[L1]
+WsURL = "wss://sepolia.infura.io/ws/v3/bd6164d34c324fa08ca5b6dc1d3ed3a2"
+RpcURL = "https://sepolia.infura.io/v3/bd6164d34c324fa08ca5b6dc1d3ed3a2"
+CDKValidiumAddress = "0x52C8f9808246eF2ce992c0e1f04fa54ec3378dD1"
+DataCommitteeAddress = "0x8346026951978bd806912d0c93FB0979D8E3436a"
+Timeout = "3m" # Make sure this value is less than the rootchain-int-ws loadbalancer timeout
+RetryPeriod = "5s"
+
+[Log]
+Environment = "development" # "production" or "development"
+Level = "debug"
+Outputs = ["stderr"]
+
+[DB]
+User = "cdk_user"
+Password = "cdk_password"
+Name = "committee_db"
+Host = "zkevm-state-db"
+Port = "5432"
+EnableLog = false
+MaxConns = 10
+
+[RPC]
+Host = "0.0.0.0"
+Port = 8444
+ReadTimeout = "60s"
+WriteTimeout = "60s"
+MaxRequestsPerIPAndSecond = 500
+SequencerNodeURI = ""
+EnableL2SuggestedGasPricePolling = false
+	[RPC.WebSockets]
+		Enabled = false
