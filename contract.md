@@ -1,15 +1,16 @@
 **文件中所用的命令要求本文件所在目录应该处于$HOME下**
 
 # steps
-- prepare env
+- prepare software
 - create account
 - start L1
 - fund account on L1
-- prepare deploy contract env
-- modiyfy deploy contract parameters
+- prepare contract deploy env
+- prepare common env
+- modiyfy contract deploy parameters
 - deploy contract
 
-## prepare env
+## prepare software
 | Download link | Version | Check version | 
 | --- | --- | --- |
 | [Node](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) | ^20 | `node --version` |
@@ -52,7 +53,7 @@ fund account
 > eth.sendTransaction({from: eth.accounts[0], to: "0x28fc11543495a8C65D733A72fBf2b2c1E17F3823", value: web3.toWei(10, "ether")})
 ```
 
-## prepare deploy contract env
+## prepare contract deploy env
 ```bash
 cd ~/cdk-deploy/contract/cdk-validium-contracts-0.0.2
 cp .env.example .env
@@ -68,31 +69,23 @@ ETHERSCAN_API_KEY=""
 - INFURA_PROJECT_ID: 不修改
 - ETHERSCAN_API_KEY: 不修改
 
+## prepare common env
 ```bash
-mkdir /tmp/cdk/
-cd /tmp/cdk
-nano .env
+cd ~/cdk-deploy
+cp .env.example .env
 ```
 
-Copy and paste the data below into the file:
-```text
-TEST_ADDRESS=""
-TEST_PRIVATE_KEY=""
-L1_URL="http://localhost:8545"
-L1_WS_URL="ws://localhost:8546"
-CHAIN_ID=11111
-```
+`modify .env:`
 - TEST_ADDRESS: create account步骤创建的账号地址
 - TEST_PRIVATE_KEY: create account步骤创建的账号私钥
-- CHAIN_ID: L2 chain id
 
-## modiyfy deploy contract parameters
+## modiyfy contract deploy parameters
 ```bash
+source ~/cdk-deploy/.env
+
 cd ~/cdk-deploy/contract/cdk-validium-contracts-0.0.2/deployment
 
-source /tmp/cdk/.env
-
-jq --arg TEST_ADDRESS "$TEST_ADDRESS" --arg CHAIN_ID "$CHAIN_ID" '.trustedSequencerURL = "http://127.0.0.1:8123" | .trustedSequencer = $TEST_ADDRESS | .trustedAggregator = $TEST_ADDRESS | .admin = $TEST_ADDRESS | .cdkValidiumOwner = $TEST_ADDRESS | .initialCDKValidiumDeployerOwner = $TEST_ADDRESS | .timelockAddress = $TEST_ADDRESS | .forkID = 6 | .chainID = $CHAIN_ID' ./deploy_parameters.json.example > ./deploy_parameters.json
+jq --arg TEST_ADDRESS "$TEST_ADDRESS" --arg L2_CHAIN_ID "$L2_CHAIN_ID" '.trustedSequencerURL = "http://127.0.0.1:8123" | .trustedSequencer = $TEST_ADDRESS | .trustedAggregator = $TEST_ADDRESS | .admin = $TEST_ADDRESS | .cdkValidiumOwner = $TEST_ADDRESS | .initialCDKValidiumDeployerOwner = $TEST_ADDRESS | .timelockAddress = $TEST_ADDRESS | .forkID = 6 | .chainID = $L2_CHAIN_ID' ./deploy_parameters.json.example > ./deploy_parameters.json
 ```
 
 也可以用其他方法修改参数文件deploy_parameters.json:
@@ -134,8 +127,8 @@ cd ~/cdk-deploy/contract/cdk-validium-contracts-0.0.2
 npm install
 
 cd ~/cdk-deploy/contract/cdk-validium-contracts-0.0.2/deployment
-npm run verify:deployer:CDKValidium:sepolia
-npm run verify:CDKValidium:sepolia
+npm run deploy:deployer:CDKValidium:sepolia
+npm run deploy:testnet:CDKValidium:sepolia
 ```
 
 `如果需要部署到非本地geth的L1请修改~/cdk-deploy/contract/cdk-validium-contracts-0.0.2/hardhat.config.js的networks.sepolia.url`

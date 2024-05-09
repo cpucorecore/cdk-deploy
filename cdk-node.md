@@ -2,10 +2,11 @@
 
 # steps
 - prepare software
-- prepare config env
+- prepare env
 - prepare config
 - prepare account keystore
 - start docker compose
+- approve node
 
 ## 1. prepare software
 | Software | Version | Installation link |
@@ -16,7 +17,7 @@
 | `make` | 3.80.0 | https://www.gnu.org/software/make/ |
 | `docker` | 24.0.0 | https://docs.docker.com/engine/install/ |
 
-## 2. prepare config env
+## 2. prepare env
 ```bash
 cd ~/cdk-deploy/contract/cdk-validium-contracts-0.0.2/deployment
 
@@ -83,7 +84,7 @@ tomlq -i -t --arg MATIC_TOKEN_ADDRESS "$MATIC_TOKEN_ADDRESS" '.NetworkConfig.Mat
 tomlq -i -t --arg POLYGON_ZKEVM_BRIDGE_ADDRESS "$POLYGON_ZKEVM_BRIDGE_ADDRESS" '.NetworkConfig.L2PolygonBridgeAddresses = [$POLYGON_ZKEVM_BRIDGE_ADDRESS]' ./config/bridge-config.toml
 ```
 
-### prepare account keystore
+### 4. prepare account keystore
 ```bash
 docker run -v ./config:/app/account cpucorecore/cdk-env /app/zkevm-node encryptKey --pk=$TEST_PRIVATE_KEY --pw="testonly" --output=/app/account/keystore
 
@@ -92,7 +93,12 @@ find ./config/keystore -type f -name 'UTC--*' | head -n 1 | xargs -I xxx mv xxx 
 # keystore生成完毕后该容器可删除
 ```
 
-## 4. start docker compose
+## 5. start docker compose
 ```bash
 docker compose up -d
+```
+
+## 6. approve node
+```bash
+docker run -v ./config/genesis.json:/app/genesis.json -v ./config/node-config.toml:/app/node-config.toml -v ./config/account.key:/app/account.key cpucorecore/cdk-env /app/zkevm-node approve --network custom --custom-network-file /app/genesis.json --cfg /app/node-config.toml --amount 1000000000000000000000000000 --password "testonly" --yes --key-store-path /app/account.key
 ```
