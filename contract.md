@@ -69,6 +69,10 @@ ETHERSCAN_API_KEY=""
 - INFURA_PROJECT_ID: 不修改
 - ETHERSCAN_API_KEY: 不修改
 
+```bash
+source .env
+```
+
 ## prepare common env
 ```bash
 cd ~/cdk-deploy
