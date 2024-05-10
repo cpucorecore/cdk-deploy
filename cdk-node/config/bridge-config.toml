@@ -12,7 +12,7 @@ Port = "5432"
 MaxConns = 20
 
 [Etherman]
-L1URL = "https://sepolia.infura.io/v3/b27a8be73bcb4bc7a83aada13c65e135"
+L1URL = "http://host.docker.internal:8545"
 L2URLs = ["http://zkevm-node:8123"]
 
 [Synchronizer]
@@ -29,28 +29,31 @@ HTTPPort = "8080"
 DefaultPageLimit = 25
 MaxPageLimit = 100
 BridgeVersion = "v1"
-	# Read only
-	[BridgeServer.DB]
-	Database = "postgres"
-	User = "cdk_user"
-	Name = "bridge_db"
-	Password = "cdk_password"
-	Host = "zkevm-state-db"
-	Port = "5432"
-	MaxConns = 20
+
+[BridgeServer.DB]
+Database = "postgres"
+User = "cdk_user"
+Name = "bridge_db"
+Password = "cdk_password"
+Host = "zkevm-state-db"
+Port = "5432"
+MaxConns = 20
 
 [NetworkConfig]
-GenBlockNumber = "5098088"
-PolygonZkEVMAddress = "0x52C8f9808246eF2ce992c0e1f04fa54ec3378dD1"
-PolygonBridgeAddress = "0x24F2aF81Ae588690C9752A342d7549f58133CE4e"
-PolygonZkEVMGlobalExitRootAddress = "0xE3A721c20B30213FEC306dd60f6c7F2fCB8b46D2"
-MaticTokenAddress = "0xd76B50509c1693C7BA35514103a0A156Ca57980c"
-L2PolygonBridgeAddresses = ["0x24F2aF81Ae588690C9752A342d7549f58133CE4e"]
-L1ChainID = 11155111
+GenBlockNumber = "114103"
+PolygonZkEVMAddress = "0xad87043eb9436b7835C66685C4DF95046a2a619b"
+PolygonBridgeAddress = "0x4349D6dEc11b322d1b2823Df32d25ae4c28f3710"
+PolygonZkEVMGlobalExitRootAddress = "0x8C7384132C88a26FF11d0d264253d66A9E0129dd"
+MaticTokenAddress = "0x8A71f49D8eaf65c022E1Ff6b2025eAc4eBEE53C1"
+L2PolygonBridgeAddresses = ["0x4349D6dEc11b322d1b2823Df32d25ae4c28f3710"]
+L1ChainID = 1337
 
 [ClaimTxManager]
 FrequencyToMonitorTxs = "1s"
-PrivateKey = {Path = "/app/account.key", Password = "testonly"}
 Enabled = true
 RetryInterval = "1s"
 RetryNumber = 10
+
+[ClaimTxManager.PrivateKey]
+Path = "/app/account.key"
+Password = "testonly"

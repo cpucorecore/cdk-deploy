@@ -1,16 +1,17 @@
-#~/tmp/cdk/dac-config.toml
-PrivateKey = {Path = "/app/account.key", Password = "testonly"}
+[PrivateKey]
+Path = "/app/account.key"
+Password = "testonly"
 
 [L1]
-WsURL = "wss://sepolia.infura.io/ws/v3/bd6164d34c324fa08ca5b6dc1d3ed3a2"
-RpcURL = "https://sepolia.infura.io/v3/bd6164d34c324fa08ca5b6dc1d3ed3a2"
-CDKValidiumAddress = "0x52C8f9808246eF2ce992c0e1f04fa54ec3378dD1"
-DataCommitteeAddress = "0x8346026951978bd806912d0c93FB0979D8E3436a"
-Timeout = "3m" # Make sure this value is less than the rootchain-int-ws loadbalancer timeout
+WsURL = "ws://host.docker.internal:8546"
+RpcURL = "http://host.docker.internal:8545"
+CDKValidiumAddress = "0xad87043eb9436b7835C66685C4DF95046a2a619b"
+DataCommitteeAddress = "0xc1614399dfF6A83a6444d7c79eaFC975A40fA568"
+Timeout = "3m"
 RetryPeriod = "5s"
 
 [Log]
-Environment = "development" # "production" or "development"
+Environment = "development"
 Level = "debug"
 Outputs = ["stderr"]
 
@@ -31,5 +32,6 @@ WriteTimeout = "60s"
 MaxRequestsPerIPAndSecond = 500
 SequencerNodeURI = ""
 EnableL2SuggestedGasPricePolling = false
-	[RPC.WebSockets]
-		Enabled = false
+
+[RPC.WebSockets]
+Enabled = false

@@ -14,9 +14,9 @@ services:
         reservations:
           memory: 2G
     ports:
-      - 5432:5432
+      - "5432:5432"
     volumes:
-      - ./db/single_db_server.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db/node/single_db_server.sql:/docker-entrypoint-initdb.d/init.sql
       - zkevm_state_db_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=cdk_user
@@ -31,8 +31,8 @@ services:
     container_name: zkevm-prover
     image: hermeznetwork/zkevm-prover:v3.0.2
     ports:
-      - 50061:50061 # MT
-      - 50071:50071 # Executor
+      - "50061:50061" # MT
+      - "50071:50071" # Executor
     volumes:
       - ./config/prover.config.json:/usr/src/app/config.json
     command: >
@@ -41,20 +41,17 @@ services:
   zkevm-node:
     container_name: zkevm-node
     image: cpucorecore/cdk-env
-    depends_on:
-      - zkevm-state-db
     ports:
-      - 9091:9091 # for metrics
-      - 6060:6060
-      - 8123:8123 # for rpc
-      - 8133:8133 # for rpc
-      - 50081:50081 # for aggregator
+      - "9091:9091" # for metrics
+      - "6060:6060"
+      - "8123:8123" # for rpc
+      - "8133:8133" # for rpc
+      - "50081:50081" # for aggregator
     volumes:
       - ./config/account.key:/app/account.key
       - ./config/node-config.toml:/app/node-config.toml
       - ./config/genesis.json:/app/genesis.json
-      - ./db/migrations:/app/migrations
-      - ./db/migrations:/migrations
+      - ./db/node/migrations:/migrations
     command:
       - "/bin/sh"
       - "-c"
@@ -63,15 +60,13 @@ services:
   zkevm-bridge-service:
     container_name: zkevm-bridge-service
     image: cpucorecore/cdk-env
-    depends_on:
-      - zkevm-node
-      - zkevm-state-db
     ports:
-      - 8080:8080
-      - 9090:9090
+      - "8080:8080"
+      - "9090:9090"
     volumes:
       - ./config/account.key:/app/account.key
       - ./config/bridge-config.toml:/app/bridge-config.toml
+      - ./db/bridge/migrations:/migrations
     command:
       - "/bin/sh"
       - "-c"
@@ -79,8 +74,6 @@ services:
 
   zkevm-data-availability:
     container_name: zkevm-data-availability
-    depends_on:
-      - zkevm-state-db
     image: cpucorecore/cdk-env
     deploy:
       resources:
@@ -89,10 +82,11 @@ services:
         reservations:
           memory: 512M
     ports:
-      - 8444:8444
+      - "8444:8444"
     volumes:
       - ./config/dac-config.toml:/app/dac-config.toml
       - ./config/account.key:/app/account.key
+      - ./db/dac/migrations:/migrations
     command:
       - "/bin/sh"
       - "-c"
