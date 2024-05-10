@@ -21,7 +21,7 @@
 ```bash
 cd ~/cdk-deploy/contract/cdk-validium-contracts-0.0.2/deployment
 
-echo "GEN_BLOCK_NUMBER=$(jq -r '.deploymentBlockNumber' ~/cdk-deploy/contract/cdk-validium-contracts-0.0.2/deployment/deploy_output.json)" >> ~/cdk-deploy/.env
+echo "GEN_BLOCK_NUMBER=$(jq -r '.deploymentBlockNumber' deploy_output.json)" >> ~/cdk-deploy/.env
 echo "CDK_VALIDIUM_ADDRESS=$(jq -r '.cdkValidiumAddress' deploy_output.json)" >> ~/cdk-deploy/.env
 echo "POLYGON_ZKEVM_BRIDGE_ADDRESS=$(jq -r '.polygonZkEVMBridgeAddress' deploy_output.json)" >> ~/cdk-deploy/.env
 echo "POLYGON_ZKEVM_GLOBAL_EXIT_ROOT_ADDRESS=$(jq -r '.polygonZkEVMGlobalExitRootAddress' deploy_output.json)" >> ~/cdk-deploy/.env
@@ -45,8 +45,8 @@ source ~/cdk-deploy/.env
 ```bash
 cd ~/cdk-deploy/cdk-node
 
-jq --argjson data "$(jq '{maticTokenAddress, cdkValidiumAddress, cdkDataCommitteeContract, polygonZkEVMGlobalExitRootAddress, deploymentBlockNumber}' ~/cdk-deploy/contract/cdk-validium-contracts-0.0.2/deployment/deploy_output.json)" \
-'.L1Config.chainId = $L1_CHAIN_ID | 
+jq --arg L1_CHAIN_ID $L1_CHAIN_ID --argjson data "$(jq '{maticTokenAddress, cdkValidiumAddress, cdkDataCommitteeContract, polygonZkEVMGlobalExitRootAddress, deploymentBlockNumber}' ~/cdk-deploy/contract/cdk-validium-contracts-0.0.2/deployment/deploy_output.json)" \
+'.L1Config.chainId = ($L1_CHAIN_ID|tonumber) | 
 .L1Config.maticTokenAddress = $data.maticTokenAddress | 
 .L1Config.polygonZkEVMAddress = $data.cdkValidiumAddress | 
 .L1Config.cdkDataCommitteeContract = $data.cdkDataCommitteeContract | 
@@ -69,6 +69,7 @@ tomlq -i -t --arg CDK_VALIDIUM_ADDRESS "$CDK_VALIDIUM_ADDRESS" '.L1.CDKValidiumA
 tomlq -i -t --arg CDK_DATA_COMMITTEE_CONTRACT_ADDRESS "$CDK_DATA_COMMITTEE_CONTRACT_ADDRESS" '.L1.DataCommitteeAddress = $CDK_DATA_COMMITTEE_CONTRACT_ADDRESS' ./config/dac-config.toml
 ```
 
+`以下命令可能会报错,请手动指定参数--rpc-url $L1_URL`(因为本文档所用的环境L1是运行在host上的,而L1_URL设置为容器访问host的地址了)
 ```bash
 cast send --legacy --from $TEST_ADDRESS --private-key $TEST_PRIVATE_KEY --rpc-url $L1_URL $CDK_DATA_COMMITTEE_CONTRACT_ADDRESS 'function setupCommittee(uint256 _requiredAmountOfSignatures, string[] urls, bytes addrsBytes) returns()' 1 '["http://localhost:8444"]' $TEST_ADDRESS
 ```
@@ -76,7 +77,7 @@ cast send --legacy --from $TEST_ADDRESS --private-key $TEST_PRIVATE_KEY --rpc-ur
 ### bridge
 ```bash
 tomlq -i -t --arg L1_URL "$L1_URL" '.Etherman.L1URL = $L1_URL' ./config/bridge-config.toml
-tomlq -i -t --arg GEN_BLOCK_NUMBER "$GEN_BLOCK_NUMBER" '.NetworkConfig.GenBlockNumber = $GEN_BLOCK_NUMBER' ./configbridge-config.toml
+tomlq -i -t --arg GEN_BLOCK_NUMBER "$GEN_BLOCK_NUMBER" '.NetworkConfig.GenBlockNumber = $GEN_BLOCK_NUMBER' ./config/bridge-config.toml
 tomlq -i -t --arg CDK_VALIDIUM_ADDRESS "$CDK_VALIDIUM_ADDRESS" '.NetworkConfig.PolygonZkEVMAddress = $CDK_VALIDIUM_ADDRESS' ./config/bridge-config.toml
 tomlq -i -t --arg POLYGON_ZKEVM_BRIDGE_ADDRESS "$POLYGON_ZKEVM_BRIDGE_ADDRESS" '.NetworkConfig.PolygonBridgeAddress = $POLYGON_ZKEVM_BRIDGE_ADDRESS' ./config/bridge-config.toml
 tomlq -i -t --arg POLYGON_ZKEVM_GLOBAL_EXIT_ROOT_ADDRESS "$POLYGON_ZKEVM_GLOBAL_EXIT_ROOT_ADDRESS" '.NetworkConfig.PolygonZkEVMGlobalExitRootAddress = $POLYGON_ZKEVM_GLOBAL_EXIT_ROOT_ADDRESS' ./config/bridge-config.toml
