@@ -55,7 +55,9 @@ fund account
 
 ## prepare contract deploy env
 ```bash
-cd ~/cdk-deploy/contract/cdk-validium-contracts-0.0.2
+cd ~/cdk-deploy/contract
+tar xzvf cdk-validium-contracts.tar.gz
+cd cdk-validium-contracts-0.0.2
 cp .env.example .env
 ```
 
@@ -130,7 +132,7 @@ jq --arg TEST_ADDRESS "$TEST_ADDRESS" --arg L2_CHAIN_ID "$L2_CHAIN_ID" '.trusted
 cd ~/cdk-deploy/contract/cdk-validium-contracts-0.0.2
 npm install
 
-cd ~/cdk-deploy/contract/cdk-validium-contracts-0.0.2/deployment
+cd deployment
 npm run deploy:deployer:CDKValidium:sepolia
 npm run deploy:testnet:CDKValidium:sepolia
 ```

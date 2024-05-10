@@ -69,9 +69,9 @@ tomlq -i -t --arg CDK_VALIDIUM_ADDRESS "$CDK_VALIDIUM_ADDRESS" '.L1.CDKValidiumA
 tomlq -i -t --arg CDK_DATA_COMMITTEE_CONTRACT_ADDRESS "$CDK_DATA_COMMITTEE_CONTRACT_ADDRESS" '.L1.DataCommitteeAddress = $CDK_DATA_COMMITTEE_CONTRACT_ADDRESS' ./config/dac-config.toml
 ```
 
-`以下命令可能会报错,请手动指定参数--rpc-url $L1_URL`(因为本文档所用的环境L1是运行在host上的,而L1_URL设置为容器访问host的地址了)
+`请注意参数--rpc-url,根据实际的L1设置`
 ```bash
-cast send --legacy --from $TEST_ADDRESS --private-key $TEST_PRIVATE_KEY --rpc-url $L1_URL $CDK_DATA_COMMITTEE_CONTRACT_ADDRESS 'function setupCommittee(uint256 _requiredAmountOfSignatures, string[] urls, bytes addrsBytes) returns()' 1 '["http://localhost:8444"]' $TEST_ADDRESS
+cast send --legacy --from $TEST_ADDRESS --private-key $TEST_PRIVATE_KEY --rpc-url http://localhost:8545 $CDK_DATA_COMMITTEE_CONTRACT_ADDRESS 'function setupCommittee(uint256 _requiredAmountOfSignatures, string[] urls, bytes addrsBytes) returns()' 1 '["http://zkevm-data-availability:8444"]' $TEST_ADDRESS
 ```
 
 ### bridge
@@ -96,7 +96,7 @@ find ./config/keystore -type f -name 'UTC--*' | head -n 1 | xargs -I xxx mv xxx 
 
 ## 5. start docker compose
 ```bash
-docker compose up -d
+make run
 ```
 
 ## 6. approve node

@@ -12,7 +12,7 @@ run:
 	$(START_PROVER)
 	sleep 1
 	$(START_NODE)
-	sleep 1
+	sleep 5
 	$(START_BRIDGE)
 	sleep 1
 	$(START_DAC)
